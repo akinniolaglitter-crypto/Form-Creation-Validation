@@ -1,45 +1,50 @@
-document.addEventListener("DOMContentLoaded", () => {
-const form = document.getElementById("registration-form");
-const feedbackDiv = document.getElementById("form-feedback");
-
-form.addEventListener("submit", () => {
-    Event.preventDefault();
-    const userName = document.getElementById("username");
-    const Email = document.getElementById("email");
-    const Password = document.getElementById("password");
-
-    const username = userName.value().trim();
-    const email = Email.value().trim();
-    const password = Password.value().trim();
-
-    const isValid = true;
+function validateForm(username, email, password) {
+    let isValid = true;
     const messages = [];
 
     if (username.length < 3) {
         isValid = false;
-        messages.push("Name is not valid!");
+        messages.push("Name must be at least 3 characters long.");
     }
 
-    if (!email.includes("@") && !email.includes(".")){
+    if (!email.includes("@") || !email.includes(".")) {
         isValid = false;
-        messages.push("Email is not valid!");
+        messages.push("Email is not valid.");
     }
 
-    if (password.length < 8){
+    if (password.length < 8) {
         isValid = false;
-        messages.push("Password not long enough");
+        messages.push("Password must be at least 8 characters long.");
     }
-    feedbackDiv.style.display = "block";
-    if (isValid = true) {
-        feedbackDiv.textContent = "Registration successful!"
+
+    return { isValid, messages };
+}
+
+function handleFormSubmit(event) {
+    event.preventDefault();
+    
+    const userName = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    const { isValid, messages } = validateForm(userName, email, password);
+    
+    const feedbackDiv = document.getElementById("form-feedback");
+    
+    feedbackDiv.style.display = "none"; 
+
+    if (isValid) {
+        feedbackDiv.textContent = "Registration successful!";
         feedbackDiv.style.color = "#28a745";
-    }
-    if (isValid = false) {
-        messages.join("<br>");
-        feedbackDiv.innerHTML = messages;
+    } else {
+        feedbackDiv.innerHTML = messages.join("<br>");
         feedbackDiv.style.color = "#dc3545";
     }
 
-})
+    feedbackDiv.style.display = "block"; 
+}
 
-})
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("registration-form");
+    form.addEventListener("submit", handleFormSubmit);
+});
